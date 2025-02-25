@@ -24,5 +24,26 @@ We recommend leaving the current settings as a default. If you wish to customize
  4. **Enable Cache** - Enabled by default to optimize API consumption. Disable the cache to monitor for changes < 1 day old. (CAUTION: this can result in high API consumption)
  5. **Add the Cache Retention Period** - Sets how long domain enrichment should live in the cache before being re-queried. 30 days is the default.  
 
- ## Deployment
- 
+ ## Deployment Guide 
+ ### Overview 
+ The following sections outline some background architecture and deployment information that is helpful for new users to understand. Additional information covering the app components: configuration files, stanzas and fields,
+KV store, macros, and saved searches is contained in [Appendix A]().  
+[Image]  
+The Saved Searches configuration file (`savedsearches.conf`) defines the processes for enrichment and the Queue Builder for the `wf_enrich_queue` KV store. In the Queue Builder process, raw logs in the Splunk Indexes are queried from the Web data model as defined by the DomainTools base search configuration (`wf_basesearch`). This process includes checking to see if the domain already exists when comparing to existing wf Enrich data, as
+that would indicate if the domain has already been enriched. If not, the new domain is queued for enrichment. Each domain is stored with the enriched data in the KV store.  
+### Prerequisites
+The WhoisFreaks App works best with Splunk Enterprise Security (ES), which makes it easy for an analyst to set up alerts on specific newly registered domains or any specific registrant or hsoting IP, but can function as a standalone monitoring platform without Splunk ES. Customers who have not yet deployed ES can still realize significant value from the WhoisFreaks solution.  
+The app works best when installed on indexers, in addition to previous requirements, during deployment. Our [Enterprise Support](https://whoisfreaks.com/contact) team can assist with workarounds if such a setup is not feasible for your environment.
+### Firewall Rule
+Ensure you can reach `https://api.whoisfreaks.com/` from the Splunk server. If required, update firewall rules to allow access to this endpoint for the app to be functional.  
+If you are on a managed infrastructure and cannot connect to the WhoisFreaks endpoint, please reach out to us so we can help verify any additional IP allow-listing activities that may be needed. 
+### Splunk Credentials to Install App
+A Splunk account with admin access is required to successfully install and configure the app. After installation, most user functions should be available with less privileged accounts.  
+You may also need command-line access (like SSH access) to perform some deployment and diagnostics functions, especially if deploying in a clustered environment.  
+### Splunk Permissions to Operate App
+Ensure that the `list_storage_passwords` privilege is added to the user operating the app. The admin role may need to be used to access the password storage within Splunk.  
+Users within the WhoisFreaks App must have read privileges to all the components of the app. If a user expects to add, update, or append values in any of the internal stores, their user profiles must include write privileges to the KV stores involved. For the list of KV stores and descriptions, please see the [App Components]() Appendix.  
+### Validating the App in Non-Production Environments
+If you use a staging environment or development environment to test new Splunk apps, ensure the same data sources you plan to use in production are also available to the Splunk `search heads` in the test environment.  
+
+
