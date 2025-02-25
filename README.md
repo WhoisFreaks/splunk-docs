@@ -46,4 +46,283 @@ Users within the WhoisFreaks App must have read privileges to all the components
 ### Validating the App in Non-Production Environments
 If you use a staging environment or development environment to test new Splunk apps, ensure the same data sources you plan to use in production are also available to the Splunk `search heads` in the test environment.  
 
+## Appendix A: App Components
+The Splunk app is provisioned with the following main components.  
+### Table: Main Configuration Files, Stanzas, and Fields
+These configuration files are relevant to utilizing the app and WhoisFreaks datasets.  
+
+ > Note 
+ > The configuration files are relevant for this version only. The configuration files,stanzas and fields will be different in
+other versions.
+
+<table>
+ <tr>
+ <th> Conf File</th>
+ <th>Stanza Tag</th>
+ <th>Fields</th>
+ <th>Description</th>
+ </tr>
+ <tr>
+  <td rowspan="4">app.conf</td>
+   <td>package</td>
+   <td>id</td>
+   <td rowspan="4">Add details for the Splunk App.</td>
+  </tr>
+  <tr>
+   <td>install</td>
+   <td>is_configured</td>
+  </tr>
+  <tr>
+   <td>ui</td>
+   <td>is_visible, label</td>
+  </tr>
+  <tr>
+    <td>launcher</td>
+   <td>author, description, version</td>
+  </tr>
+
+  <tr>
+  <td rowspan="5">commands.conf</td>
+   <td>wfapiusage</td>
+   <td>chunked,filename</td>
+   <td rowspan="5">These are helper commands for the app. The most commonly used ones outside the app are described in greater detail in Extending WhoisFreaks Commands Outside the App, as well as the in-app
+documentation.<br>
+<b>chunked</b> is used to indicate the search command supports Splnuk’s “chunked” custom protocol, used by all of these stanzas.  <br>
+<b>filename</b> Indicates the location of the Python .py filenames for thesecommands.</td>
+  </tr>
+  <tr>
+   <td>wfdomainextract</td>
+   <td>chunked,filename</td>
+  </tr>
+  <tr>
+   <td>wfwhois</td>
+   <td>chunked,filename</td>
+  </tr>
+  <tr>
+    <td>wfdns</td>
+   <td>chunked,filename</td>
+  </tr>
+  <tr>
+    <td>wfexpirecache</td>
+   <td>chunked,filename</td>
+  </tr>
+
+   <tr>
+   <td rowspan="5">searchbnf.conf</td>
+    <td>wfapiusage-command</td>
+   <td>syntax, shortdesc, usage, comment1, example1</td>
+   <td rowspan="5">The syntax (shorter name), description and if the usage is public.</td>
+  </tr>
+  <tr>
+   <td>wfdomainextract-command</td>
+   <td>syntax, shortdesc, usage, comment1, example1</td>
+  </tr>
+  <tr>
+   <td>wfwhois-command</td>
+   <td>syntax, shortdesc, usage, comment1, example1</td>
+  </tr>
+  <tr>
+    <td>wfdns-command</td>
+   <td>syntax, shortdesc, usage, comment1, example1</td>
+  </tr>
+   <tr>
+    <td>wfexpirecache-command</td>
+   <td>syntax, shortdesc, usage, comment1, example1</td>
+  </tr>
+
+   <tr>
+   <td>server.conf</td>
+    <td>shclustering</td>
+   <td>conf_replication_include.WhoisFreaks</td>
+   <td>Default value is set to true.</td>
+  </tr>
+
+   <tr>
+  <td rowspan="4">transforms.conf</td>
+   <td>wf_stats</td>
+   <td>external_type, collection, fields_list, case_sensitive_match</td>
+   <td rowspan="4">These are KV store fields. Please see the table in this section KV Store/Collection Name with Descriptions and Fieldsfor the array of <b>fields_list</b> for each stanza.</td>
+  </tr>
+  <tr>
+   <td>wf_enrich_queue</td>
+   <td>external_type, collection,
+fields_list,
+case_sensitive_match</td>
+  </tr>
+  <tr>
+   <td>wf_whois_data</td>
+   <td>external_type, collection,
+fields_list,
+case_sensitive_match</td>
+  </tr>
+  <tr>
+    <td>wf_dns_data</td>
+   <td>external_type, collection,
+fields_list,
+case_sensitive_match</td>
+  </tr>
+
+   <tr>
+  <td rowspan="3">whoisfreaks.conf</td>
+   <td rowspan="3">whoisfreaks</td>
+   <td>bulk_lookup_batch_size</td>
+   <td>Number of domains batched in an API
+call. Set the value from 1 to 100. Default is 100.</td>
+  </tr>
+  <tr>
+   <td>optimize_lookup</td>
+   <td>This enables quicker correlation of cached data of known domains from lookup table. This feature requires additional disk-space, so disabling this will reduce disk space consumption but slow down the searches. Default is enabled.</td>
+  </tr>
+  <tr>
+   <td>logging_on</td>
+   <td>Toggles whether or not to write logs to
+file.</td>
+  </tr>
+
+  <tr>
+  <td rowspan="3">distsearch.conf</td>
+   <td rowspan="3">replicationWhitelist</td>
+   <td>domainextract</td>
+   <td>Path to domainextract custom search
+command to be copied to indexers</td>
+  </tr>
+   <tr>
+   <td>lib</td>
+   <td>Path to python libs to be copied to
+indexers.</td>
+  </tr>
+ 
+</table>
+
+### Table: KV Store/ Collection Names and Fields
+<table>
+ <tr>
+  <th>KV Store / Collection Name</th>
+  <th>Fields</th>
+ </tr>
+ <tr>
+  <td>wf_stats</td>
+  <td>_key, domain_name,whois_status,dns_status,first_seen,last_seen</td>
+ </tr>
+ <tr>
+  <td>wf_enrich_queue</td>
+  <td>_key, domain,queued,observed</td>
+ </tr>
+  <tr>
+  <td>wf_whois_data</td>
+  <td>_key, wf_queued,wf_retrieved,wf_observed,_raw,domain_name,status,query_time,create_date,update_date,expiry_date,<br>domain_registrar_id,domain_registrar_name,domain_registrar_whois,domain_registrar_url,registrant_name,registrant_company,registrant_address,<br>registrant_city,registrant_state,registrant_zip,registrant_country_code,registrant_country,registrant_email,registrant_phone,<br>registrant_fax,administrative_name,administrative_company,administrative_address,administrative_city,<br>administrative_state,administrative_zip,administrative_country_code,administrative_country,<br>administrative_email,administrative_phone,administrative_fax,technical_name,technical_company,technical_address,technical_city,<br>technical_state,technical_zip,technical_country_code,technical_country,technical_email,technical_phone,technical_fax,billing_name,billing_company<br>,billing_address,billing_city,billing_state,billing_zip,billing_country_code,billing_country,billing_email,<br>billing_phone,billing_fax,name_server_1,name_server_2,name_server_3,<br>name_server_4,domain_status_1,domain_status_2,domain_status_3,domain_status_4,reseller_name,reseller_email,reseller_phone</td>
+ </tr>
+  <tr>
+  <td>wf_dns_data</td>
+  <td>_key, dwf_queued,wf_retrieved,wf_observed,_raw,domain_name,status,,<br>a_records,aaaa_records,mx_records,spf_records,ns_records,txt_records,cname_records,soa_records</td>
+ </tr>
+</table>
+
+### Table: Key Macros for Enrichment
+<table>
+ <tr>
+  <th>Macro Field Name</th>
+  <th>Default Value</th>
+  <th>Description</th>
+ </tr>
+ <tr>
+  <td>wf_basesearch</td>
+  <td></td>
+  <td>The value that is defined is the base search. Data is pulled
+directly from the <b>datamodel</b>. We use this search to search for
+and queue up domains for the app and certain features such as
+the dashboards</td>
+ </tr>
+  <tr>
+  <td>wf_rename_base_fields</td>
+  <td></td>
+  <td>Rename base fields of Url, src, dest, domain, and log_source from base search log file.</td>
+ </tr>
+  <tr>
+  <td>enable_cache</td>
+  <td>1 (enbaled)</td>
+  <td>Enrichment setting to determine caching of enriched data.
+WhoisFreaks will always enrich every domain in the queue.
+When turned off (set to 0) an API call will be made for every
+domain.</td>
+ </tr>
+  <tr>
+  <td>wf_cache_retention_period</td>
+  <td>30 (days)</td>
+  <td>Enrichment setting. Set the value to how many days back before
+removing older data from the enrichment kvstore.
+There is also a saved search that will remove records that are
+over 30 days old.</td>
+ </tr>
+  <tr>
+  <td>wf_enrich_to_stats_lookup</td>
+  <td></td>
+  <td>A partial search that is used by the saved searches that update
+the enriched data KV Store.</td>
+ </tr>
+  <tr>
+  <td>wf_whois_fields</td>
+  <td></td>
+  <td>WHOIS fields store in enriched data KV store.</td>
+ </tr>
+  <tr>
+  <td>wf_dns_fields</td>
+  <td></td>
+  <td>DNS fields store in enriched data KV store.</td>
+ </tr>
+</table>
+
+### Table: Saved Search Names and Descriptions
+<table>
+ <tr>
+  <th>Saved Search Name</th>
+  <th>Type</th>
+  <th>Description ofthe Saved Search </th>
+  <th>Required</th>
+  <th>App Functionalities</th>
+ </tr>
+ <tr>
+  <td>WhoisFreaks - Queue Builder to Enrich KV Store</td>
+  <td>Reports</td>
+  <td>A search to extract domains from raw events based on your configured base search and store them in the <b>wf_enrich_queue</b> KV store for enrichment.</td>
+  <td>Yes</td>
+  <td>Core App</td>
+ </tr>
+ <tr>
+  <td>WhoisFreaks - Whois Enrichment</td>
+  <td>Reports</td>
+  <td>A search to enrich domains found in <b>wf_enrich_queue</b>, and store results in <b>wf_whois_data collection</b>. By default, the search is scheduled to run every 5 minutes and pulls data over the past 30 minutes. You can customize this frequency in the app.</td>
+  <td>Yes</td>
+  <td>Core App</td>
+ </tr>
+ <tr>
+  <td>WhoisFreaks - DNS Enrichment</td>
+  <td>Reports</td>
+  <td>A search to enrich domains found in <b>wf_enrich_queue</b>, and store results in <b>wf_dns_data collection</b>. By default, the search is scheduled to run every 5 minutes and pulls data over the past 30 minutes.</td>
+  <td>Yes</td>
+  <td>Core App</td>
+ </tr>
+  <tr>
+  <td>WhoisFreaks - Expire Old Queue Data</td>
+  <td>Reports</td>
+  <td>A search to remove domains from the <b>wf_enrich_queue</b> collection that are over a day old.</td>
+  <td>Yes</td>
+  <td>Core App</td>
+ </tr>
+  <tr>
+  <td>WhoisFreaks - Expire Old Whois Data</td>
+  <td>Reports</td>
+  <td>A search to remove enrichment data from the <b>wf_whois_data</b> collection based on the cache retention settings configured in the app.</td>
+  <td>Yes</td>
+  <td>Core App</td>
+ </tr>
+  <tr>
+  <td>WWhoisFreaks - Expire Old DNS Data</td>
+  <td>Reports</td>
+  <td>A search to remove enrichment data from the <b>wf_dns_data</b> collection based on the cache retention settings configured in the app.</td>
+  <td>Yes</td>
+  <td>Core App</td>
+ </tr>
+</table>
+
 
