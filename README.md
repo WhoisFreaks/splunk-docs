@@ -27,7 +27,7 @@ We recommend leaving the current settings as a default. If you wish to customize
  ## Deployment Guide 
  ### Overview 
  The following sections outline some background architecture and deployment information that is helpful for new users to understand. Additional information covering the app components: configuration files, stanzas and fields,
-KV store, macros, and saved searches is contained in [Appendix A]().  
+KV store, macros, and saved searches is contained in [Appendix A](https://github.com/WhoisFreaks/splunk-docs/edit/main/README.md#appendix-a-app-components).  
 [Image]  
 The Saved Searches configuration file (`savedsearches.conf`) defines the processes for enrichment and the Queue Builder for the `wf_enrich_queue` KV store. In the Queue Builder process, raw logs in the Splunk Indexes are queried from the Web data model as defined by the DomainTools base search configuration (`wf_basesearch`). This process includes checking to see if the domain already exists when comparing to existing wf Enrich data, as
 that would indicate if the domain has already been enriched. If not, the new domain is queued for enrichment. Each domain is stored with the enriched data in the KV store.  
@@ -42,7 +42,7 @@ A Splunk account with admin access is required to successfully install and confi
 You may also need command-line access (like SSH access) to perform some deployment and diagnostics functions, especially if deploying in a clustered environment.  
 ### Splunk Permissions to Operate App
 Ensure that the `list_storage_passwords` privilege is added to the user operating the app. The admin role may need to be used to access the password storage within Splunk.  
-Users within the WhoisFreaks App must have read privileges to all the components of the app. If a user expects to add, update, or append values in any of the internal stores, their user profiles must include write privileges to the KV stores involved. For the list of KV stores and descriptions, please see the [App Components]() Appendix.  
+Users within the WhoisFreaks App must have read privileges to all the components of the app. If a user expects to add, update, or append values in any of the internal stores, their user profiles must include write privileges to the KV stores involved. For the list of KV stores and descriptions, please see the [App Components](https://github.com/WhoisFreaks/splunk-docs/edit/main/README.md#appendix-a-app-components) Appendix.  
 ### Validating the App in Non-Production Environments
 If you use a staging environment or development environment to test new Splunk apps, ensure the same data sources you plan to use in production are also available to the Splunk `search heads` in the test environment.  
 
