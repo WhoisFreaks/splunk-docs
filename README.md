@@ -46,6 +46,37 @@ Users within the WhoisFreaks App must have read privileges to all the components
 ### Validating the App in Non-Production Environments
 If you use a staging environment or development environment to test new Splunk apps, ensure the same data sources you plan to use in production are also available to the Splunk `search heads` in the test environment.  
 
+## Application Setup  
+This section covers the base items needed to get your WhoisFreaks App for Splunk instance up and running.  
+### Configuring Base Search Using the Pre-Configured Query  
+The app arrives with a pre-configured performance-optimized query. This query will work well in environments where data sources are Common Information Model (CIM) compliant.  
+First, identify relevant CIM-compliant data sources for ingestion. It may be data sources already configured to use web proxy events, for example. If your base search involves working with relevant data sources that are not CIM-compliant.  
+To use the pre-configured query:  
+1. Go to WF Settings → Configure Log Source page
+2. Confirm the details of the pre-configured Splunk search query. The pre-configured base search made available in the app is:
+```
+tstats summariesonly=true count FROM datamodel=Web BY _time Web.url Web.src Web.dest source | rename Web.url AS url |
+ rename Web.src AS src | rename Web.dest AS dest | rename source AS log_source |
+wfdomainextract field_in=url field_out=domain | eval domain=lower(domain) | fields url src dest log_source domain _time
+```
+The app natively supports logs with multivalue URLs contained in a single event entry, commonly seen in Proofpoint logs.  
+3. If needed, customize the preconfigured base search to ensure the required fields are available  
+4. Select the Save button.
+5. Select the Timeframe for the Base Search.  
+
+Base search requirements and recommendations:  
+* `domain` and `_time` are required output fields to operate the app
+* We recommend adding the optional fields Source, Destination, and Log Source in your base search. They provide additional contextual information on the events. The app will also not error out in the absence of these fields.
+
+Performance considerations: 
+* The Web data model must have acceleration turned on
+* If acceleration is not turned on, yet data has been mapped to the CIM, you can modify the base search to use `summariesonly=false` with some potential degradation in performance.
+
+If you already have the domains extracted out in the CIM, you can remove the `wfdomainextract` function fromyour base search. This will further improve performance.  
+
+### Managing API Key
+
+
 ## Appendix A: App Components
 The Splunk app is provisioned with the following main components.  
 ### Table: Main Configuration Files, Stanzas, and Fields
