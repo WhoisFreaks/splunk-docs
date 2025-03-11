@@ -27,8 +27,7 @@ We recommend leaving the current settings as a default. If you wish to customize
  ## Deployment Guide 
  ### Overview 
  The following sections outline some background architecture and deployment information that is helpful for new users to understand. Additional information covering the app components: configuration files, stanzas and fields,
-KV store, macros, and saved searches is contained in [Appendix A](https://github.com/WhoisFreaks/splunk-docs/edit/main/README.md#appendix-a-app-components).  
-[Image]  
+KV store, macros, and saved searches is contained in [Appendix A](https://github.com/WhoisFreaks/splunk-docs/edit/main/README.md#appendix-a-app-components).   
 The Saved Searches configuration file (`savedsearches.conf`) defines the processes for enrichment and the Queue Builder for the `wf_enrich_queue` KV store. In the Queue Builder process, raw logs in the Splunk Indexes are queried from the Web data model as defined by the DomainTools base search configuration (`wf_basesearch`). This process includes checking to see if the domain already exists when comparing to existing wf Enrich data, as
 that would indicate if the domain has already been enriched. If not, the new domain is queued for enrichment. Each domain is stored with the enriched data in the KV store.  
 ### Prerequisites
