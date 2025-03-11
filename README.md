@@ -83,7 +83,38 @@ Adding and Testing API Connectivity:
 4. Once validated, click Update to save the settings
 
 ### configure Saved Searches  
-The app uses a series of Saved Searches to automate operational tasks within Splunk. The full list of saved searches can be found in the [Saved Search Names and Descriptions](https://github.com/WhoisFreaks/splunk-docs/edit/main/README.md#table-saved-search-names-and-descriptions) table in Appendix A.
+The app uses a series of Saved Searches to automate operational tasks within Splunk. The full list of saved searches can be found in the [Saved Search Names and Descriptions](https://github.com/WhoisFreaks/splunk-docs/edit/main/README.md#table-saved-search-names-and-descriptions) table in Appendix A.  
+Upon clicking Test Connection after entering your API key above,you will be prompted to enable the default set of saved searches. Clicking enable will turn on the set of seven minimum required saved searches for the Core App functionality noted in the saved searches [table](https://github.com/WhoisFreaks/splunk-docs/edit/main/README.md#table-saved-search-names-and-descriptions).  
+
+## Further Configurations
+The above sections describe the minimum steps required to get started. The following sections go into additional detail to help configure the application to provide the most value in your environment.  
+### Configuring the Base Search Using the Custom SPL
+Configuring Base Search using your own custom Search Processing Language query (SPL) may be necessary if data is not yet CIM compliant, or input data sources are from ingested data from several different sources. 
+First, identify relevant data sources for ingestion. It may contain URLs or hostnames, in addition to domain names. IP addresses are not supported for processing with this app.  
+To configure using custom SPL:  
+1. Craft the Splunk search query that efficiently finds events from your preferred data source(s).
+   a. It is not necessary (or effective) to write regular expressions or other parsing rules to extract domains in logs filled with hostnames or URLs or de-duplicate logs. This task is handled by WhoisFreaks queue builder search jobs.
+   b. We recommend using `tstats`. It is also used in the pre-configured base search for optimization.
+2. Add the query as the base search via WF Settings → Configure Log Source page
+3. Add the query in the Base Search input field.
+4. Click the Save button
+
+Your custom SPL must meet these criteria:
+1. If your custom search does not begin `tstats` you must add search to ensure proper functionality once it is merged into the WhoisFreaks scheduled searches.
+2. Must not start with a pipe | character
+3. Ensure the result contains a field named domain or use `rename` function
+4. The search must efficiently return results from the last 10 minutes of events. Ideally in a few seconds, but no longer than two or three minutes
+
+### Enable Mass Enrichment
+We recommend leaving the current settings as a default. If you wish to customize the Enrichment Settings:  
+1. Go to WF Settings → Configure Enrichment
+2. Once any of the following settings are changed, select the Save button.
+   * Select the Queue Wait Time. Queue Wait Time is how often the app enriches Domain information. Default is 5 minutes. Decreasing the frequency can be helpful to reduce API usage or if the enrichment is taking longer than 5 minutes to run on a higher volume Splunk cluster
+   * Configure the Cache Settings
+     * WhoisFreaks maintains a cache to reduce API query usage. A user may wish to disable or reduce the cache retention period times when monitoring volatile domains.
+     * Enable Cache - Enabled by default to optimize API consumption. Disable the cache to monitor for changes < 1 day old. (CAUTION: this can result in high API consumption)
+     * Add the Cache Retention Period - Sets how long domain enrichment should live in the cache before being re-queried. 30 days is the default.
+   * Select DNS & WHOIS fields you want to monitor and used for enrichment.
 
 ## Appendix A: App Components
 The Splunk app is provisioned with the following main components.  
