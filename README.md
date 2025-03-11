@@ -75,7 +75,7 @@ Performance considerations:
 If you already have the domains extracted out in the CIM, you can remove the `wfdomainextract` function fromyour base search. This will further improve performance.  
 
 ### Managing API Key
-
+![WhoisFreaks API Key Management](images/Managing-API-Key.png)
 
 ## Appendix A: App Components
 The Splunk app is provisioned with the following main components.  
