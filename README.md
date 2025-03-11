@@ -75,7 +75,15 @@ Performance considerations:
 If you already have the domains extracted out in the CIM, you can remove the `wfdomainextract` function fromyour base search. This will further improve performance.  
 
 ### Managing API Key
-![WhoisFreaks API Key Management](images/Managing-API-Key.png)
+![WhoisFreaks API Key Management](images/Managing-API-Key.png)  
+Adding and Testing API Connectivity:  
+1. Navigate to WF Settings → API Key.
+2. Enter your WhoisFreaks API Key
+3. Click the Test Connection button to validate the connection(s).
+4. Once validated, click Update to save the settings
+
+### configure Saved Searches  
+The app uses a series of Saved Searches to automate operational tasks within Splunk. The full list of saved searches can be found in the [Saved Search Names and Descriptions](https://github.com/WhoisFreaks/splunk-docs/edit/main/README.md#table-saved-search-names-and-descriptions) table in Appendix A.
 
 ## Appendix A: App Components
 The Splunk app is provisioned with the following main components.  
